@@ -44,7 +44,7 @@ elsif ( $date < 1 || $date > $days ) #check for valid day
 { print "The date is not within a valid range for the sepcified month\n"; }
 else
 {
- for ($i = $i; $i <= $weeks; $i++) #for loop to cycle the specified amount
+ for ($i = $i; $i < $weeks; $i++) #for loop to cycle the specified amount
  {
   if ($date > $days) # if date is greater then the days of that month
   { 
@@ -56,10 +56,22 @@ else
   }
 
   $month = sprintf("%02d", $month); #make sure month has is in 2 diget format then print ical event info
+  $x = sprintf("%02d",$date);
   printf ICAL "BEGIN:VEVENT\n"; 
-  printf ICAL "DTSTART;VALUE=DATE:$year$month$date\n";
-  $x = $date + 1; #generate the end date for the event
-  printf ICAL "DTEND;VALUE=DATE:$year$month$x\n";
+  printf ICAL "DTSTART;VALUE=DATE:$year$month$x\n";
+  $dat = $date + 5; #generate the end date for the event
+  $mont = $month;
+  if ($dat > $days) # if date is greater then the days of that month
+  { 
+   $dat = $dat - $days; #take away days of that month to get new date
+   $mont++; #incriment month counter
+   if ($mont > 12) #if month over 12 cycle back to january
+   { $mont = 1; } 
+   &days; #find out how many days are in this month
+  }
+  $x = sprintf("%02d",$dat);
+  $mont = sprintf("%02d", $mont); #make sure month has is in 2 diget format then print ical event info
+  printf ICAL "DTEND;VALUE=DATE:$year$mont$x\n";
   printf ICAL "SUMMARY:Week $i\n";
   printf ICAL "X-GOOGLE-CALENDAR-CONTENT-TITLE:Week $i\n";
   printf ICAL "X-GOOGLE-CALENDAR-CONTENT-ICON:http://sites.google.com/site/gcalweeknumbers/Home/week$i.png\n";
